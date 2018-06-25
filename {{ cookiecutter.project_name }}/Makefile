@@ -4,7 +4,7 @@ build:
 	cd ./src && npm install
 
 pull_request: build
-	cd ./src && npm lint && npm test
+	cd ./src && npm run lint && npm run test
 
 pre_package:
 	cd ./src && npm install --production
