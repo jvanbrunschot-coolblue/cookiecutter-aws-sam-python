@@ -1,6 +1,6 @@
 'use strict';
 
-const { hello } = require('../../src/hello.js');
+const { helloWorld } = require('../src/helloWorld');
 
 let callbackMock;
 
@@ -9,13 +9,15 @@ beforeEach(() => {
   callbackMock = jest.fn();
 });
 
-test('hello', () => {
+test('helloWorld', () => {
 
-  hello(event, callbackMock);
+  const event = {};
+
+  helloWorld(event, callbackMock);
 
   expect(callbackMock.mock.calls.length).toBe(1);
   expect(callbackMock).toHaveBeenCalledWith(null, {
-    status: '200',
-    body: {"message": "hello"}
+    statusCode: 200,
+    body: JSON.stringify({ message: 'helloWorld' })
   });
 });
