@@ -14,23 +14,23 @@ SUCCESS = "\x1b[1;32m [SUCCESS]: "
 HINT = "\x1b[3;33m"
 
 
-def remove_optional_files():
-    filenames = ["Makefile"]
-    for file in filenames:
-        if os.path.isfile(file):
-            print(INFO + "Removing {} from project due to chosen options...".
-                  format(file) + TERMINATOR)
-            os.remove(file)
-
-    return True
+# def remove_optional_files():
+#     filenames = ["Makefile"]
+#     for file in filenames:
+#         if os.path.isfile(file):
+#             print(INFO + "Removing {} from project due to chosen options...".
+#                   format(file) + TERMINATOR)
+#             os.remove(file)
+#
+#     return True
 
 
 def main():
 
     project_name = '{{ cookiecutter.project_name }}'
-    makefile_choice = '{{ cookiecutter.include_experimental_make }}'.lower()
-    if makefile_choice == 'n':
-        remove_optional_files()
+    # makefile_choice = '{{ cookiecutter.include_experimental_make }}'.lower()
+    # if makefile_choice == 'n':
+    #     remove_optional_files()
 
     print(SUCCESS +
           "Project initialized successfully! You can now jump to {} folder".
