@@ -48,8 +48,10 @@ Resources:
   Function:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      CodeUri: code/
       FunctionName: !Sub "${AppGroup}-function" # make sure to change the functionname
       Runtime: "nodejs8.10"
+      Handler: index.hello
       Timeout: 300
       Role: !ImportValue "iam-lambda-basic-execution-role-arn" # default role; aws-coolblue
 {%- if cookiecutter.vpc_integration == "y" %}
@@ -60,7 +62,6 @@ Resources:
           - !ImportValue "infrastructure-private-application-subnet-1a"
           - !ImportValue "infrastructure-private-application-subnet-1b"
           - !ImportValue "infrastructure-private-application-subnet-1c" {% endif %}
-      CodeUri: code/
       Events: # More info about event: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#event-source-types
         Publish: # this is just a placeholder
           Type: "Api"
