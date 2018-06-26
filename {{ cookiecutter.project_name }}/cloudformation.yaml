@@ -25,14 +25,14 @@ Parameters:
       - "eu-west-1"
 Resources:
 {%- if cookiecutter.protected_api == "y" %}
- ApiKey:
-  Type: "AWS::ApiGateway::ApiKey"
-  Properties:
-    Enabled: true
-    StageKeys:
-      -
-        RestApiId: !Ref "ServerlessApi"
-        StageName: !Ref "ServerlessApiStage" {% endif %}
+  ApiKey:
+    Type: "AWS::ApiGateway::ApiKey"
+    Properties:
+      Enabled: true
+      StageKeys:
+        -
+          RestApiId: !Ref "ServerlessApi"
+          StageName: !Ref "ServerlessApiStage" {% endif %}
   BasePathMapping: # The AWS::ApiGateway::BasePathMapping resource creates a base path that clients who call your Amazon API Gateway API must use in the invocation URL
       Type: "AWS::ApiGateway::BasePathMapping"
       Properties:
@@ -113,7 +113,7 @@ Resources:
         schemes:
           - "https"
 {%- if cookiecutter.protected_api == "y" %}
-       securityDefinitions:
+        securityDefinitions:
           api_key:
             type: "apiKey"
             name: "x-api-key"
