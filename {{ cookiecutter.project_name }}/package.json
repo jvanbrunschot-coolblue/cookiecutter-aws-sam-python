@@ -10,5 +10,11 @@
 "scripts": {
   "test": "jest",
   "lint": "eslint ."
-  }
+},
+"repository": {
+  "type": "git",
+  "url": "git+https://github.com/coolblue-development/{{ cookiecutter.project_github_repo }}.git"
+},
+"author": "Coolblue BV",
+"license": "UNLICENSED"
 }

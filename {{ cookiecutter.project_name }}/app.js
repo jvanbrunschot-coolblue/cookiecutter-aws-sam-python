@@ -1,6 +1,6 @@
 'use strict';
 
-const hello = require('./src/hello');
+const hello = require('./src/helloWorld');
 
 exports.hello = (event, context, callback) => {
   hello(event, callback);

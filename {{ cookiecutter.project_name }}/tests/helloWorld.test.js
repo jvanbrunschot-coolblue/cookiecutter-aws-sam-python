@@ -10,7 +10,6 @@ beforeEach(() => {
 });
 
 test('helloWorld', () => {
-
   const event = {};
 
   helloWorld(event, callbackMock);
