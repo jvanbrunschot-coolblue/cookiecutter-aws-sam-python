@@ -17,15 +17,16 @@ AWS CLI commands to package, deploy and describe outputs defined within the clou
 
 ```bash
 aws cloudformation package \
-    --template-file template.yaml \
+    --template-file cloudformation.yaml \
     --output-template-file packaged.yaml \
-    --s3-bucket REPLACE_THIS_WITH_YOUR_S3_BUCKET_NAME
+    --s3-bucket ml-jamie \
+    --profile development
 
 aws cloudformation deploy \
     --template-file packaged.yaml \
     --stack-name {{ cookiecutter.project_name.lower().replace(' ', '-') }} \
     --capabilities CAPABILITY_IAM \
-    --parameter-overrides MyParameterSample=MySampleValue
+    --profile development
 
 aws cloudformation describe-stacks \
     --stack-name {{ cookiecutter.project_name.lower().replace(' ', '-') }} --query 'Stacks[].Outputs'

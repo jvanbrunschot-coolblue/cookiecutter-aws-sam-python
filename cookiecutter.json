@@ -4,5 +4,6 @@
     "project_github_repo": "",
     "project_app_group": "",
     "vpc_integration": "n",
-    "protected_api": "n"
+    "protected_api": "n",
+    "dev_bucket": "Development bucket"
 }
