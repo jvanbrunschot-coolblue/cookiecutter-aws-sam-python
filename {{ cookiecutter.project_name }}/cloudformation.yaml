@@ -5,8 +5,6 @@ Parameters:
   AppGroup:
     Type: "String"
     Default: {{ cookiecutter.project_app_group }}
-  CloudFrontCertificateArn:
-    Type: "String"
   Environment:
     Type: "String"
     AllowedValues:
@@ -24,27 +22,6 @@ Parameters:
     AllowedValues:
       - "eu-west-1"
 Resources:
-{%- if cookiecutter.protected_api == "y" %}
-  ApiKey:
-    Type: "AWS::ApiGateway::ApiKey"
-    Properties:
-      Enabled: true
-      StageKeys:
-        -
-          RestApiId: !Ref "ServerlessApi"
-          StageName: !Ref "ServerlessApiStage" {% endif %}
-  BasePathMapping: # The AWS::ApiGateway::BasePathMapping resource creates a base path that clients who call your Amazon API Gateway API must use in the invocation URL
-      Type: "AWS::ApiGateway::BasePathMapping"
-      Properties:
-        DomainName: !Sub "${AppGroup}.${Region}.coolblue-${Environment}.eu"
-        RestApiId: !Ref "ServerlessApi"
-        Stage: !Ref "ServerlessApiStage"
-      DependsOn: DomainName
-  DomainName: # The AWS::ApiGateway::DomainName resource specifies a custom domain name for your API in Amazon API Gateway (API Gateway).
-    Type: "AWS::ApiGateway::DomainName"
-    Properties:
-      CertificateArn: !Ref "CloudFrontCertificateArn"
-      DomainName: !Sub "${AppGroup}.${Region}.coolblue-${Environment}.eu"
   Function:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -54,90 +31,6 @@ Resources:
       Handler: index.hello
       Timeout: 300
       Role: !ImportValue "iam-lambda-basic-execution-role-arn" # default role; aws-coolblue
-{%- if cookiecutter.vpc_integration == "y" %}
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref "PrivateSecurityGroup"
-        SubnetIds:
-          - !ImportValue "infrastructure-private-application-subnet-1a"
-          - !ImportValue "infrastructure-private-application-subnet-1b"
-          - !ImportValue "infrastructure-private-application-subnet-1c" {% endif %}
-      Events: # More info about event: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#event-source-types
-        Publish: # this is just a placeholder
-          Type: "Api"
-          Properties:
-            Method: "GET"
-            Path: "/hello"
-            RestApiId: !Ref "ServerlessApi"
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
-{%- if cookiecutter.vpc_integration == "y" %}
-  PrivateSecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
-    Properties:
-      GroupDescription: "Allowed incoming/outgoing traffic to/from the internal resources"
-      SecurityGroupEgress:
-        - Description: "Remove default egress rule that allows egress traffic on all ports and IP protocols to any location"
-          CidrIp: "127.0.0.1/32"
-          IpProtocol: "-1"
-      VpcId: !ImportValue "infrastructure-vpc"
-      Tags:
-        - Key: "Name"
-          Value: !Sub "${Environment}-${AppGroup}-private"
-        - Key: "AppGroup"
-          Value: !Sub "${AppGroup}"
-        - Key: "AppRole"
-          Value: "security-group"
-        - Key: "Environment"
-          Value: !Ref "Environment" {% endif %}
-  Route53RecordSet:
-    Type: "AWS::Route53::RecordSet"
-    Properties:
-      AliasTarget:
-        DNSName: !GetAtt "DomainName.DistributionDomainName"
-        HostedZoneId: "Z2FDTNDATAQYW2" # Default hostedZoneId for CloudFront
-      Comment: "Alias record for api gateway"
-      HostedZoneId: !ImportValue "dns-coolblue-public-hosted-zone-id"
-      Name: !Sub "${AppGroup}.${Region}.coolblue-${Environment}.eu"
-      Type: "A"
-  ServerlessApi:
-    Type: "AWS::Serverless::Api"
-    Properties:
-      StageName: !Ref "Environment"
-      DefinitionBody:
-        swagger: "2.0"
-        info:
-          title: !Ref "AppGroup"
-          version: "2018-01-11-11:40"
-        basePath: !Sub "/${Environment}"
-        schemes:
-          - "https"
-{%- if cookiecutter.protected_api == "y" %}
-        securityDefinitions:
-          api_key:
-            type: "apiKey"
-            name: "x-api-key"
-            in: "header" {% endif %}
-        paths:
-          /hello:
-            get:
-              produces:
-                - "application/json"
-              responses:
-                '200':
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-{%- if cookiecutter.protected_api == "y" %}
-              security:
-                - api_key: [] {% endif %}
-              x-amazon-apigateway-integration:
-                responses:
-                  default:
-                    statusCode: 200
-                uri: !Sub "arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
-                passthroughBehavior: "when_no_match"
-                httpMethod: "POST" # This is the integration between API Gateway and Lambda, keep this value to POST
-                contentHandling: "CONVERT_TO_TEXT"
-                type: "aws_proxy"

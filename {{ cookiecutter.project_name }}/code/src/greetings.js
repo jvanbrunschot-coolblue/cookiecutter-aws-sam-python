@@ -11,11 +11,4 @@ function hello(event, callback) {
   });
 }
 
-function goodbye(event, callback) {
-  callback(null, {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'goodbye' })
-  });
-}
-
-module.exports = { hello, goodbye };
+module.exports = { hello };

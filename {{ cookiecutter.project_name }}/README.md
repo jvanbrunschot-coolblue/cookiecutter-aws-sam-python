@@ -4,32 +4,40 @@
 
 ## Requirements
 
-* AWS CLI already configured with at least PowerUser permission
-* [Python 3 installed](https://www.python.org/downloads/)
-* [Pipenv installed](https://github.com/pypa/pipenv)
-    - `pip install pipenv`
 * [Docker installed](https://www.docker.com/community-edition)
-* [SAM Local installed](https://github.com/awslabs/aws-sam-local)
+* [SAM Local installed](https://hosting-and-deployment.cool.blue/#/aws/lambda/README?id=aws-sam-cli)
 
-## AWS CLI commands
+## Invoking locally
 
-AWS CLI commands to package, deploy and describe outputs defined within the cloudformation stack:
-
-```bash
-aws cloudformation package \
-    --template-file cloudformation.yaml \
-    --output-template-file packaged.yaml \
-    --s3-bucket ml-jamie \
-    --profile development
-
-aws cloudformation deploy \
-    --template-file packaged.yaml \
-    --stack-name {{ cookiecutter.project_name.lower().replace(' ', '-') }} \
-    --capabilities CAPABILITY_IAM \
-    --profile development
-
-aws cloudformation describe-stacks \
-    --stack-name {{ cookiecutter.project_name.lower().replace(' ', '-') }} --query 'Stacks[].Outputs'
+```
+echo "1" | sam local invoke -t cloudformation.yaml Function
 ```
 
-## Running
+## Content
+
+### Build scripts
+
+The scripts used in the standardized pipelines: `build.sh` & `Makefile` are used together to; for example lint, test and build code.
+
+The `Makefile` contains logic (hooks) used in the build pipelines:
+
+**pull_request**: Used during the pull_request step in TeamCity; run tests, linters here.
+
+**pre_package**: Used during packaging of your application, install dependencies, remove unnecessary files. Try to keep the deployable package as small as possible.
+
+**post_package**: N/A
+
+**pre_deploy**: N/A
+
+**post_deploy**: Can be used for running `acceptance` tests.
+
+### CloudFormation
+
+The `cloudformation.yaml` file contains all resources you need to provision your environment in AWS.
+Since everything in AWS is environment driven you need to use parameter files to deploy the CloudFormation.
+Place a parameter file per environment in the `cloudformation` directory name `<environment>.parameters.json`.
+
+### Code
+
+Your code lives in the **code** directory. For this cookiecutter, we put ours tests inside the code directory.
+The structure we use here is an example, you are able to structure the code to your preference.

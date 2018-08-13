@@ -1,9 +1,5 @@
 {
     "project_name": "Name of the project",
     "project_short_description": "A short description of the project",
-    "project_github_repo": "",
-    "project_app_group": "",
-    "vpc_integration": "n",
-    "protected_api": "n",
-    "dev_bucket": "Development bucket"
-}
+    "project_app_group": ""
+  }
